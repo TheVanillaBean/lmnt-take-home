@@ -1,23 +1,79 @@
+import axios from 'axios';
+import Image from 'next/image';
+import { Fragment } from 'react';
+
 export default function Home(props) {
-  const { flavorsInBundle } = props;
+  const { flavorsInBundle, flavors } = props;
   return (
     <main>
-      <p className='text-lg'>{flavorsInBundle.join(' ')}</p>
+      {flavors.map((flavor) => (
+        <Fragment key={flavor.id}>
+          <h1>{flavor.title}</h1>
+          <Image src={flavor.image.originalSrc} width={100} height={100} />
+        </Fragment>
+      ))}
     </main>
   );
 }
 
 export async function getServerSideProps(context) {
-  const { query } = context;
+  try {
+    const endpoint = process.env.SHOPIFY_ENDPOINT;
+    const headers = {
+      'content-type': 'application/json',
+      'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN,
+    };
+    const graphqlQuery = {
+      query: `
+        query {
+          product(id: "${process.env.SHOPIFY_PRODUCT_ID}") {
+            variants(first: 15) {
+              edges {
+                node {
+                  id
+                  title
+                  price
+                  image {
+                      id
+                      originalSrc
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+    };
 
-  const bundleData = query.bundle ?? '';
+    const {
+      data: { data },
+    } = await axios({
+      url: endpoint,
+      method: 'post',
+      headers: headers,
+      data: graphqlQuery,
+    });
 
-  const flavorsInBundle = bundleData.length > 0 ? bundleData.split(',') : [];
+    const flavors = data.product.variants.edges.map((edge) => edge.node);
 
-  return {
-    props: {
-      flavorsInBundle,
-      flavors: {},
-    },
-  };
+    const { query } = context;
+
+    const bundleData = query.bundle ?? '';
+
+    const flavorsInBundle = bundleData.length > 0 ? bundleData.split(',') : [];
+
+    return {
+      props: {
+        flavorsInBundle,
+        flavors,
+      },
+    };
+  } catch (e) {
+    return {
+      redirect: {
+        destination: '/error',
+        permanent: false,
+      },
+    };
+  }
 }
