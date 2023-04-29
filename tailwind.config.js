@@ -11,7 +11,13 @@ module.exports = {
         sans: ['var(--font-nanum-gothic)'],
         mono: ['var(--font-open-sans)'],
       },
+      fontSize: {
+        '3xl': ['1.875rem', { lineHeight: '2.5rem' }],
+      },
+      colors: {
+        lime: '#afc13d',
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/aspect-ratio')],
 };
