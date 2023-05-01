@@ -1,8 +1,9 @@
 import Dropdown from '@/components/Dropdown';
 import FlavorItem from '@/components/FlavorItem';
 import axios from 'axios';
-import { CartContext } from 'context/CartContext';
-import { useContext, useState } from 'react';
+import { CART_ACTIONS, CartContext } from 'context/CartContext';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
 
 const frequencies = [
   { option: 'Delivered only once', discount: 0 },
@@ -12,13 +13,44 @@ const frequencies = [
 ];
 
 export default function Home(props) {
-  const { flavorsInBundle, flavors } = props;
+  const { flavorsFromURL, flavors } = props;
 
   const [selected, setSelected] = useState(frequencies[1]);
-  const { totalItems } = useContext(CartContext);
+  const { dispatchCart, totalItems, bundleURL } = useContext(CartContext);
+  const [addToCartBtnText, updateAddToCartBtnText] = useState('');
 
-  const addToCartBtnText =
-    totalItems() === 4 ? 'Add to cart' : `Add ${4 - totalItems()} more items`;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/', undefined, { shallow: true });
+  }, []);
+
+  useEffect(() => {
+    if (bundleURL.length > 0) {
+      router.push(`/?bundle=${bundleURL}`, undefined, { shallow: true });
+    } else {
+      router.push(`/`, undefined, { shallow: true });
+    }
+  }, [bundleURL]);
+
+  useEffect(() => {
+    if (flavorsFromURL.length > 0) {
+      dispatchCart({
+        type: CART_ACTIONS.PRELOAD_BUNDLED_ITEMS,
+        payload: flavorsFromURL,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (totalItems === 4) {
+      updateAddToCartBtnText('Add to cart');
+    } else if (totalItems === 3) {
+      updateAddToCartBtnText('Add 1 more item');
+    } else {
+      updateAddToCartBtnText(`Add ${4 - totalItems} more items`);
+    }
+  }, [totalItems]);
 
   return (
     <main>
@@ -38,12 +70,12 @@ export default function Home(props) {
           {/* Flavor Item */}
           <div className='mt-6 grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3'>
             {flavors.map((flavor) => (
-              <FlavorItem key={flavor.id} flavor={flavor} />
+              <FlavorItem key={flavor.sku} flavor={flavor} />
             ))}
           </div>
 
-          <div className='flex justify-center w-full mt-12 sticky bottom-0 lg:relative'>
-            <button className='bg-lime text-white text-center px-5 py-4 rounded-xl mb-4 lg:mb-0'>
+          <div className='flex justify-center w-full mt-12 sticky bottom-0'>
+            <button className='bg-lime text-white text-center px-5 py-4 rounded-xl mb-4'>
               {addToCartBtnText}
             </button>
           </div>
@@ -67,7 +99,7 @@ export async function getServerSideProps(context) {
             variants(first: 15) {
               edges {
                 node {
-                  id
+                  sku
                   title
                   price
                   image {
@@ -92,16 +124,23 @@ export async function getServerSideProps(context) {
     });
 
     const flavors = data.product.variants.edges.map((edge) => edge.node);
+    const skus = flavors.map(({ sku }) => sku);
 
     const { query } = context;
 
     const bundleData = query.bundle ?? '';
 
-    const flavorsInBundle = bundleData.length > 0 ? bundleData.split(',') : [];
+    let flavorsFromURL = bundleData.length > 0 ? bundleData.split(',') : [];
+
+    const invalidURLBundle = flavorsFromURL.some((sku) => !skus.includes(sku));
+
+    if (invalidURLBundle) {
+      flavorsFromURL = [];
+    }
 
     return {
       props: {
-        flavorsInBundle,
+        flavorsFromURL,
         flavors,
       },
     };

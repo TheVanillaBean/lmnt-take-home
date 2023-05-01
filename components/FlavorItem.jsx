@@ -6,7 +6,7 @@ import Stepper from './Stepper';
 function FlavorItem({ flavor }) {
   const { cart, totalItems } = useContext(CartContext);
 
-  const disabled = totalItems() === 4 && !cart.cartItems[flavor.id] > 0;
+  const disabled = totalItems === 4 && !cart.cartItems[flavor.sku] > 0;
 
   return (
     <div className='group relative'>
@@ -30,11 +30,11 @@ function FlavorItem({ flavor }) {
         }`}>
         <h3>{flavor.title}</h3>
         <div className='flex items-center space-x-2'>
-          <p className='text-base font-medium line-through'>{flavor.price}</p>
-          <p className='text-base font-bold'>{flavor.price * 0.75}</p>
+          <p className='text-base font-medium line-through'>${flavor.price}</p>
+          <p className='text-base font-bold'>${flavor.price * 0.75}</p>
         </div>
       </div>
-      <Stepper flavorId={flavor.id} disabled={disabled} />
+      <Stepper flavorSku={flavor.sku} disabled={disabled} />
     </div>
   );
 }
