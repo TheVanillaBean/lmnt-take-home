@@ -1,9 +1,9 @@
 import Dropdown from '@/components/Dropdown';
 import FlavorItem from '@/components/FlavorItem';
-import axios from 'axios';
 import { CART_ACTIONS, CartContext } from 'context/CartContext';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
+import { getAllFlavors, getFlavorsFromURL } from 'util/api-helper';
 
 const frequencies = [
   { option: 'Delivered only once', discount: 0 },
@@ -87,56 +87,13 @@ export default function Home(props) {
 
 export async function getServerSideProps(context) {
   try {
-    const endpoint = process.env.SHOPIFY_ENDPOINT;
-    const headers = {
-      'content-type': 'application/json',
-      'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN,
-    };
-    const graphqlQuery = {
-      query: `
-        query {
-          product(id: "${process.env.SHOPIFY_PRODUCT_ID}") {
-            variants(first: 15) {
-              edges {
-                node {
-                  sku
-                  title
-                  price
-                  image {
-                      id
-                      originalSrc
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-    };
-
-    const {
-      data: { data },
-    } = await axios({
-      url: endpoint,
-      method: 'post',
-      headers: headers,
-      data: graphqlQuery,
-    });
-
-    const flavors = data.product.variants.edges.map((edge) => edge.node);
-    const skus = flavors.map(({ sku }) => sku);
+    const flavors = await getAllFlavors();
 
     const { query } = context;
 
     const bundleData = query.bundle ?? '';
 
-    let flavorsFromURL = bundleData.length > 0 ? bundleData.split(',') : [];
-
-    const invalidURLBundle = flavorsFromURL.some((sku) => !skus.includes(sku));
-
-    if (invalidURLBundle) {
-      flavorsFromURL = [];
-    }
+    const flavorsFromURL = getFlavorsFromURL(bundleData, flavors);
 
     return {
       props: {
