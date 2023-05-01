@@ -5,8 +5,8 @@ function NoRoute() {
         <div className='flex flex-col items-start justify-between space-y-5 mb-12'>
           <h1 className='text-3xl font-bold text-gray-900'>Page not found</h1>
           <p className='text-base font-bold text-gray-900'>
-            It looks like you are snooping where you shouldn't be snooping. But here is a fun fact:
-            a duck can see almost 340 degrees around and can sleep with one eye open.
+            It looks like you are snooping where you shouldn&apos;t be snooping. But here is a fun
+            fact: a duck can see almost 340 degrees around and can sleep with one eye open.
           </p>
         </div>
       </div>
