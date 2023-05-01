@@ -1,7 +1,8 @@
+import Dropdown from '@/components/Dropdown';
+import FlavorItem from '@/components/FlavorItem';
 import axios from 'axios';
-import FlavorItem from 'components/components/FlavorItem';
-import Dropdown from 'components/components/dropdown';
-import { useState } from 'react';
+import { CartContext } from 'context/CartContext';
+import { useContext, useState } from 'react';
 
 const frequencies = [
   { option: 'Delivered only once', discount: 0 },
@@ -14,6 +15,10 @@ export default function Home(props) {
   const { flavorsInBundle, flavors } = props;
 
   const [selected, setSelected] = useState(frequencies[1]);
+  const { totalItems } = useContext(CartContext);
+
+  const addToCartBtnText =
+    totalItems() === 4 ? 'Add to cart' : `Add ${4 - totalItems()} more items`;
 
   return (
     <main>
@@ -35,6 +40,12 @@ export default function Home(props) {
             {flavors.map((flavor) => (
               <FlavorItem key={flavor.id} flavor={flavor} />
             ))}
+          </div>
+
+          <div className='flex justify-center w-full mt-12 sticky bottom-0 lg:relative'>
+            <button className='bg-lime text-white text-center px-5 py-4 rounded-xl mb-4 lg:mb-0'>
+              {addToCartBtnText}
+            </button>
           </div>
         </div>
       </div>
