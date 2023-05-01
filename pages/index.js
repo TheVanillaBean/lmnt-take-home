@@ -23,7 +23,7 @@ export default function Home(props) {
 
   useEffect(() => {
     router.push('/', undefined, { shallow: true });
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (bundleURL.length > 0) {
@@ -31,7 +31,7 @@ export default function Home(props) {
     } else {
       router.push(`/`, undefined, { shallow: true });
     }
-  }, [router, bundleURL]);
+  }, [bundleURL]);
 
   useEffect(() => {
     if (flavorsFromURL.length > 0) {
@@ -40,7 +40,7 @@ export default function Home(props) {
         payload: flavorsFromURL,
       });
     }
-  }, [flavorsFromURL, dispatchCart]);
+  }, []);
 
   useEffect(() => {
     if (totalItems === 4) {
