@@ -1,4 +1,4 @@
-import { CART_ACTIONS, CartContext } from 'components/context/CartContext';
+import { CART_ACTIONS, CartContext } from 'context/CartContext';
 import { useContext, useState } from 'react';
 
 export default function useCounter(id, initial = 0, maximum = 4) {

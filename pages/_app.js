@@ -1,7 +1,7 @@
-import CartProvider from 'components/context/CartContext';
-import 'components/styles/globals.css';
+import CartProvider from 'context/CartContext';
 import { Nanum_Gothic, Open_Sans } from 'next/font/google';
 import Head from 'next/head';
+import 'styles/globals.css';
 
 // If loading a variable font, you don't need to specify the font weight
 const NanumGothic = Nanum_Gothic({

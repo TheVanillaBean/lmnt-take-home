@@ -1,4 +1,4 @@
-import { CartContext } from 'components/context/CartContext';
+import { CartContext } from 'context/CartContext';
 import Image from 'next/image';
 import { useContext } from 'react';
 import Stepper from './Stepper';

@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import useCounter from 'components/hooks/useCounter';
+import useCounter from 'hooks/useCounter';
 
 function Stepper({ flavorId, disabled }) {
   const [count, incrementCount, decrementCount] = useCounter(flavorId);
