@@ -1,3 +1,4 @@
+import CartProvider from 'components/context/CartContext';
 import 'components/styles/globals.css';
 import { Nanum_Gothic, Open_Sans } from 'next/font/google';
 
@@ -17,5 +18,9 @@ const OpenSans = Open_Sans({
 });
 
 export default function App({ Component, pageProps }) {
-  return <Component className={`${NanumGothic.variable} ${OpenSans.variable}`} {...pageProps} />;
+  return (
+    <CartProvider>
+      <Component className={`${NanumGothic.variable} ${OpenSans.variable}`} {...pageProps} />{' '}
+    </CartProvider>
+  );
 }
