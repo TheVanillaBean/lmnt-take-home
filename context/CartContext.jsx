@@ -18,10 +18,8 @@ const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case CART_ACTIONS.PRELOAD_BUNDLED_ITEMS:
       const preloadedIds = payload;
-      const cartItems = state.cartItems;
 
       let preloadedCartItems = {};
-
       for (const id of preloadedIds) {
         preloadedCartItems[id] = preloadedCartItems[id] ? preloadedCartItems[id] + 1 : 1;
       }
@@ -75,7 +73,7 @@ const CartProvider = (props) => {
           return Array(cart.cartItems[currSku]).fill(currSku).join();
         }
         return currSku;
-      }, [])
+      })
       .join();
     setBundleURL(url);
   }, [cart]);

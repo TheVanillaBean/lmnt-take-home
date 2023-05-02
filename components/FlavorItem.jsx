@@ -3,20 +3,21 @@ import Image from 'next/image';
 import { useContext } from 'react';
 import Stepper from './Stepper';
 
-function FlavorItem({ flavor }) {
+function FlavorItem({ flavor, priority = false }) {
   const { cart, totalItems } = useContext(CartContext);
 
   const disabled = totalItems === 4 && !cart.cartItems[flavor.sku] > 0;
 
   return (
-    <div className='group relative'>
-      <div className='aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100'>
+    <div className='relative'>
+      <div className='aspect-h-4 aspect-w-4 overflow-hidden bg-gray-100'>
         <Image
           src={flavor.image.originalSrc}
           alt={flavor.title}
-          className='object-cover object-center'
+          className='object-cover object-top'
           width={350}
           height={350}
+          priority={priority}
         />
       </div>
       <div

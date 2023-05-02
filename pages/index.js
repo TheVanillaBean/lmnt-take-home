@@ -67,10 +67,9 @@ export default function Home(props) {
 
           <Dropdown frequencies={frequencies} selected={selected} setSelected={setSelected} />
 
-          {/* Flavor Item */}
-          <div className='mt-6 grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3'>
-            {flavors.map((flavor) => (
-              <FlavorItem key={flavor.sku} flavor={flavor} />
+          <div className='mt-6 grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-3'>
+            {flavors.map((flavor, indx) => (
+              <FlavorItem key={flavor.sku} flavor={flavor} priority={indx === 0} />
             ))}
           </div>
 
